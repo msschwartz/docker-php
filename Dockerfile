@@ -1,16 +1,81 @@
-FROM circleci/php:5.6-cli-node-browsers
+FROM centos:centos7
+MAINTAINER Michael Schwartz "msschwartz@outlook.com"
 
-MAINTAINER Michael Schwartz <msschwartz@outlook.com>
+################################################################################
+# Import Remi Repository
+################################################################################
 
-RUN sudo apt-get -y update
+RUN yum --assumeyes install \
+    yum-utils \
+    wget \
+    epel-release \
+    && rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm \
+    && yum-config-manager -q --enable remi \
+    && yum-config-manager -q --enable remi-php56
 
-# install gmp
-RUN sudo apt-get -y install libgmp-dev
-RUN sudo ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/
-RUN sudo docker-php-ext-configure gmp
-RUN sudo docker-php-ext-install gmp
+################################################################################
+# General
+################################################################################
 
-# isntall soap
-RUN sudo apt-get -y install libxml2-dev
-RUN sudo docker-php-ext-configure soap
-RUN sudo docker-php-ext-install soap
+WORKDIR /tmp/
+ENV HOME /root
+
+RUN yum --assumeyes install \
+    git-core tar bzip2 unzip net-tools which \
+    && yum clean all
+
+################################################################################
+# PHP
+################################################################################
+
+RUN yum --assumeyes install \
+    php-fpm php-cli \
+    php-bcmath php-intl php-mbstring php-opcache php-xml php-gmp \
+    php-mcrypt php-openssl php-pecl-libsodium \
+    php-pdo php-mysql php-mssql php-pgsql \
+    php-ldap php-soap \
+    php-pecl-apcu php-pecl-memcache php-pecl-xdebug \
+    && yum clean all
+
+RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php.ini
+
+ENV COMPOSER_NO_INTERACTION 1
+ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY shared/configuration/composer.json $HOME/.composer/config.json
+
+################################################################################
+# Node
+################################################################################
+# reference: https://github.com/joyent/docker-node/blob/413687b73f1f3d43286bfda1ea8008509538d8bd/0.10/Dockerfile
+
+ENV NODE_VERSION 8.9.4
+ENV NPM_VERSION 5.6.0
+
+RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
+    && curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+    && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
+    && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
+    && rm "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
+    && npm install -g npm@"$NPM_VERSION" \
+    && npm cache clear
+
+COPY shared/configuration/.npmrc $HOME/.npmrc
+COPY shared/configuration/.bowerrc $HOME/.bowerrc
+
+################################################################################
+# CLEAN UP
+################################################################################
+
+WORKDIR $HOME
+RUN yum clean all
+
+# composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php composer-setup.php
+RUN php -r "unlink('composer-setup.php');"
+RUN mv composer.phar /usr/local/bin/composer
+
+# blank directory
+RUN mkdir -p /var/www/app
+
+CMD ["/bin/sh"]
