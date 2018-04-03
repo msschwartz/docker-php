@@ -1,10 +1,7 @@
 FROM centos:centos7
 MAINTAINER Michael Schwartz "msschwartz@outlook.com"
 
-################################################################################
 # Import Remi Repository
-################################################################################
-
 RUN yum --assumeyes install \
     yum-utils \
     wget \
@@ -13,10 +10,7 @@ RUN yum --assumeyes install \
     && yum-config-manager -q --enable remi \
     && yum-config-manager -q --enable remi-php56
 
-################################################################################
 # General
-################################################################################
-
 WORKDIR /tmp/
 ENV HOME /root
 
@@ -24,10 +18,7 @@ RUN yum --assumeyes install \
     git-core tar bzip2 unzip net-tools which \
     && yum clean all
 
-################################################################################
 # PHP
-################################################################################
-
 RUN yum --assumeyes install \
     php-fpm php-cli \
     php-bcmath php-intl php-mbstring php-opcache php-xml php-gmp \
@@ -43,11 +34,7 @@ ENV COMPOSER_NO_INTERACTION 1
 ENV COMPOSER_ALLOW_SUPERUSER 1
 COPY shared/configuration/composer.json $HOME/.composer/config.json
 
-################################################################################
 # Node
-################################################################################
-# reference: https://github.com/joyent/docker-node/blob/413687b73f1f3d43286bfda1ea8008509538d8bd/0.10/Dockerfile
-
 ENV NODE_VERSION 8.9.4
 ENV NPM_VERSION 5.6.0
 
@@ -62,10 +49,7 @@ RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x
 COPY shared/configuration/.npmrc $HOME/.npmrc
 COPY shared/configuration/.bowerrc $HOME/.bowerrc
 
-################################################################################
 # CLEAN UP
-################################################################################
-
 WORKDIR $HOME
 RUN yum clean all
 
