@@ -41,8 +41,7 @@ RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x
     && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
     && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
     && rm "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
-    && npm install -g npm@"$NPM_VERSION" \
-    && npm cache clear
+    && npm install -g npm@"$NPM_VERSION"
 
 COPY .npmrc $HOME/.npmrc
 COPY .bowerrc $HOME/.bowerrc
