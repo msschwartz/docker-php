@@ -1,0 +1,6 @@
+{
+    "strict-ssl": false,
+    "color": true,
+    "interactive": false,
+    "allow_root": true
+}

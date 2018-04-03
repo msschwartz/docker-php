@@ -28,11 +28,9 @@ RUN yum --assumeyes install \
     php-pecl-apcu php-pecl-memcache php-pecl-xdebug \
     && yum clean all
 
-RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php.ini
-
 ENV COMPOSER_NO_INTERACTION 1
 ENV COMPOSER_ALLOW_SUPERUSER 1
-COPY shared/configuration/composer.json $HOME/.composer/config.json
+COPY composer.json $HOME/.composer/config.json
 
 # Node
 ENV NODE_VERSION 8.9.4
@@ -46,8 +44,8 @@ RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x
     && npm install -g npm@"$NPM_VERSION" \
     && npm cache clear
 
-COPY shared/configuration/.npmrc $HOME/.npmrc
-COPY shared/configuration/.bowerrc $HOME/.bowerrc
+COPY .npmrc $HOME/.npmrc
+COPY .bowerrc $HOME/.bowerrc
 
 # CLEAN UP
 WORKDIR $HOME

@@ -1,0 +1,11 @@
+{
+    "config": {
+        "secure-http": false
+    },
+    "repositories": {
+        "internal-composer": {
+            "type": "composer",
+            "url": "http://composer"
+        }
+    }
+}
