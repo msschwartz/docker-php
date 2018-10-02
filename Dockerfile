@@ -55,7 +55,7 @@ RUN yum --assumeyes install \
 
     `# Extras` \
     php54-php-ldap php54-php-soap \
-    php-ldap php-soap \
+    php-ldap php-soap php54-php-tidy.x86_64 \
 
     `# PECL` \
     php54-php-pecl-apcu php54-php-pecl-memcache php54-php-pecl-xdebug php54-php-pecl-http1 \
