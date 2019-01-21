@@ -1,15 +1,14 @@
-FROM php:7.0-apache
+FROM circleci/php:7.0-stretch-node-browsers-legacy
 
-WORKDIR /root
+WORKDIR /home/circleci
 
 RUN apt-get update
-RUN apt-get install wget python -y
+RUN apt-get install wget python git -y
 
 RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-230.0.0-linux-x86_64.tar.gz
 RUN tar -zxvf google-cloud-sdk-230.0.0-linux-x86_64.tar.gz
-RUN /root/google-cloud-sdk/install.sh --quiet
-RUN /root/google-cloud-sdk/bin/gcloud components install kubectl --quiet
-RUN echo "export PATH=/root/google-cloud-sdk/bin:$PATH" >> ~/.bashrc
+RUN /home/circleci/google-cloud-sdk/install.sh --quiet
+RUN /home/circleci/google-cloud-sdk/bin/gcloud components install kubectl --quiet
 
 # composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
