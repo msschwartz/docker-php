@@ -12,6 +12,7 @@ RUN /root/google-cloud-sdk/install.sh --quiet
 RUN /root/google-cloud-sdk/bin/gcloud components install kubectl --quiet
 RUN ln -s /root/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud
 RUN ln -s /root/google-cloud-sdk/bin/kubectl /usr/local/bin/kubectl
+RUN ln -s /root/google-cloud-sdk/bin/docker-credential-gcloud /usr/local/bin/docker-credential-gcloud
 
 # docker
 RUN curl -L -o /tmp/docker-17.03.0-ce.tgz https://download.docker.com/linux/static/stable/x86_64/docker-17.03.0-ce.tgz
